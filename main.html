@@ -1,0 +1,131 @@
+<html>
+<head>
+  <link 
+    rel="stylesheet" 
+    href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" 
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" 
+    crossorigin="anonymous">
+</head>
+   <body style=" margin:auto;">
+      <script>
+         function FormSubmit(event) {
+            event.preventDefault();
+            console.log(document.getElementById("jsonFile").value)
+            var param = new FormData();
+            console.log("data/".concat(document.getElementById("jsonFile").value.split("\\").pop()));
+            param.append("jsonFile", "data/".concat(document.getElementById("jsonFile").value.split("\\").pop()));
+            param.append("MinLat", document.getElementById("MinLat").value);
+            param.append("MinLon", document.getElementById("MinLon").value);
+            param.append("MaxLat", document.getElementById("MaxLat").value);
+            param.append("MaxLon", document.getElementById("MaxLon").value);
+            param.append("MinTime", document.getElementById("MinTime").value);
+            param.append("MaxTime", document.getElementById("MaxTime").value);
+            param.append("MinLat_1", document.getElementById("MinLat_1").value);
+            param.append("MinLon_1", document.getElementById("MinLon_1").value);
+            param.append("MaxLat_1", document.getElementById("MaxLat_1").value);
+            param.append("MaxLon_1", document.getElementById("MaxLon_1").value);
+            param.append("KNN_ID", document.getElementById("KNN_ID").value);
+            param.append("KNN_K", document.getElementById("KNN_K").value);
+            var object = {};
+            param.forEach(function(value, key){
+               object[key] = value;
+            });
+            console.log(param);
+            console.log(JSON.stringify(object));
+            const requestOptions = {
+               method: 'POST',
+               mode: 'no-cors',
+               headers: {'Content-Type': 'application/json', 'Access-Control-Allow-Origin' : '*'},
+               body: JSON.stringify(object)
+            };
+            var res = fetch("http://localhost:8000/plot", requestOptions).then(response => response.json()).then(result=> {
+               var display = document.getElementById('iframe').contentWindow.document;
+               display.open();
+               display.write(result['html']);
+               display.close();
+            });
+         }
+      </script>
+      <style>
+        body { 
+          background-image:url('background-image.png'); 
+        }
+      </style>
+    <div id="title" style="margin-top: 40px; text-align:center; color: #136557">
+      <h1>CSE 594 : Spatial Data Science & Engineering - Project Phase 2</h1>
+    </div>
+    <div style="width:600px; margin:auto; margin-top:100px;margin-left: 30px;">
+    <div style="width:500px; margin:auto; margin-top:50px;justify-content: left;float: left;">
+    <form onsubmit="FormSubmit(event)">
+      <div class="input-group mb-3">
+        <input type="file" class="form-control" id="jsonFile">
+      </div>
+      <div class="row">
+        <div class="col">
+          <input type="text" class="form-control" placeholder="Minimum Latitude" id="MinLat">
+        </div>
+        <div class="col">
+          <input type="text" class="form-control" placeholder="Maximum Latitude" id="MaxLat">
+        </div>
+      </div>
+      <div class="row" style="margin-top:20px">
+        <div class="col">
+          <input type="text" class="form-control" placeholder="Minimum Longitude" id="MinLon">
+        </div>
+        <div class="col">
+          <input type="text" class="form-control" placeholder="Maximum Longitude" id="MaxLon">
+        </div>
+      </div>
+      <div class="row" style="margin-top:20px">
+        <div class="col">
+          <input type="text" class="form-control" placeholder="Minimum Time" id="MinTime">
+        </div>
+        <div class="col">
+          <input type="text" class="form-control" placeholder="Maximum Time" id="MaxTime">
+        </div>
+      </div>
+      <div class="row" style="margin-top:20px">
+        <div class="col">
+          <input type="text" class="form-control" placeholder="Minimum Latitude (1)" id="MinLat_1">
+        </div>
+        <div class="col">
+          <input type="text" class="form-control" placeholder="Maximum Latitude (1)" id="MaxLat_1">
+        </div>
+      </div>
+      <div class="row" style="margin-top:20px">
+        <div class="col">
+          <input type="text" class="form-control" placeholder="Minimum Longitude (1)" id="MinLon_1">
+        </div>
+        <div class="col">
+          <input type="text" class="form-control" placeholder="Maximum Longitude (1)" id="MaxLon_1">
+        </div>
+      </div>
+      <div class="row" style="margin-top:20px">
+        <div class="col">
+          <input type="text" class="form-control" placeholder="Trajectory ID" id="KNN_ID">
+        </div>
+        <div class="col">
+          <input type="text" class="form-control" placeholder="Number of Neighbors" id="KNN_K">
+        </div>
+      </div>
+      <div style="text-align:center; margin-top:20px;">
+        <button align="center" id="submit" type="submit" class="btn btn-rounded">Submit</button>
+        <style>
+          #submit{
+            background-color:#136557;
+            color: #ffffff
+          }
+          #submit:hover{
+            background-color: #95c2bb;
+            color: black;
+          }
+        </style>
+      </div>
+    </form>
+    </div>
+    </div>
+    <div style="text-align:center; margin-top:0px;">
+      <iframe style="width:600px; height:500px" id="iframe"></iframe>
+    </div>
+   </body>
+</html>
